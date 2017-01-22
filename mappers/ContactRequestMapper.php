@@ -37,4 +37,5 @@ class ContactRequestMapper extends Mapper{
 
 		return $requests;
 	}
+
 }

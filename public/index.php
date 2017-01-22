@@ -79,6 +79,9 @@ $app->group("/users", function(){
 	$this->delete("/{id_user1}/contactRequests/{id_user2}",\ContactRequestController::class.":deleteContactRequest");
 	$this->get("/{id_user}/requests",\ContactRequestController::class.":getRequests");
 	$this->post("/{id_user1}/contacts/{id_user2}",\ContactController::class.":insertContact");
+	$this->get("/{id_user}/contacts",\ContactController::class.":getContactsOfUser");
+	$this->get("/{id_user1}/relationship/{id_user2}",\UserController::class.":getRelationship");
+	$this->delete("/{id_user1}/contacts/{id_user2}",\ContactController::class.":deleteContact");
 });
 
 $app->group("/groups", function(){

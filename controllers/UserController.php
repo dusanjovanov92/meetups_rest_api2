@@ -64,4 +64,15 @@ class UserController extends Controller{
 		$response = $response->withJson($result,200);
 		return $response;
 	}
+
+	public function getRelationship($request,$response,$args){
+		$id_user1 = $args["id_user1"];
+		$id_user2 = $args["id_user2"];
+
+		$user_mapper = new UserMapper($this->db);
+		$result = $user_mapper->getRelationship($id_user1,$id_user2);
+
+		$response = $response->withJson($result,200);
+		return $response;
+	}
 }

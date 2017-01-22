@@ -70,5 +70,36 @@ class UserMapper extends Mapper{
 
 		return $result;
 	}
+
+	public function getRelationship($id_user1,$id_user2)
+	{
+		$sql = "SELECT EXISTS(SELECT 1 FROM contact_requests cr WHERE cr.sender = :sender AND cr.receiver = :receiver) AS exist;";
+
+		$stm = $this->db->prepare($sql);
+		$stm->execute(["sender"=>$id_user1,"receiver"=>$id_user2]);
+		$result1 = $stm->fetch();
+		if($result1["exist"]==1){
+			return 1;
+		}
+
+		$stm->closeCursor();
+		$stm->execute(["sender"=>$id_user2,"receiver"=>$id_user1]);
+		$result2 = $stm->fetch();
+
+		if($result2["exist"]==1){
+			return 2;
+		}
+
+		$sql = "SELECT EXISTS(SELECT 1 FROM contact c WHERE c.id_user1 = ? AND c.id_user2 = ?) AS exist;";
+
+		$stm = $this->db->prepare($sql);
+		$stm->execute([$id_user1,$id_user2]);
+		$result3 = $stm->fetch();
+		if($result3["exist"]==1){
+			return 3;
+		}
+		
+		return 0;
+	}
 }
 
