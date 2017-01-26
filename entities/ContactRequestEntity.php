@@ -2,10 +2,20 @@
 
 class ContactRequestEntity implements JsonSerializable{
 
+	protected $id;
 	protected $user;
 
-	public function __construct($user){
+	public function __construct($id,$user){
+		$this->id = $id;
 		$this->user = $user;
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function getId()
+	{
+	    return $this->id;
 	}
 
 	/**
@@ -18,6 +28,7 @@ class ContactRequestEntity implements JsonSerializable{
 
 	public function jsonSerialize()
 	{
-		return ["user"=>$this->user];
+		return ["id"=>$this->id,
+				"user"=>$this->user];
 	}
 }

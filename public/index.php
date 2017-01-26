@@ -67,27 +67,85 @@ $container["ContactController"] = function($c){
 	return new ContactController($c->get("db"));
 };
 
+$container["MeetingController"] = function($c){
+	return new MeetingController($c->get("db"));
+};
+
+$container["GroupRequestController"] = function($c){
+	return new GroupRequestController($c->get("db"));
+};
+
+$container["MeetingResponseController"] = function($c){
+	return new MeetingResponseController($c->get("db"));
+};
+
 $app->group("/users", function(){
 	$this->get("/{id}", \UserController::class.":getUserById");
+
 	$this->get("/getByEmail/{email}", \UserController::class.":getUserByEmail");
+
 	$this->get('/search/{query}', \UserController::class.":searchUsers");
+
 	$this->post("",\UserController::class.":insertUser");
+
 	$this->get("/{email}/checkExists",\UserController::class.":emailExists");
+
 	$this->put("/{id}",\UserController::class.":updateUser");
+
 	$this->get("/{id}/groups",\GroupController::class.":getGroupsOfUser");
+
 	$this->post("/{id_user1}/contactRequests/{id_user2}",\ContactRequestController::class.":insertContactRequest");
+
 	$this->delete("/{id_user1}/contactRequests/{id_user2}",\ContactRequestController::class.":deleteContactRequest");
+
 	$this->get("/{id_user}/requests",\ContactRequestController::class.":getRequests");
+
 	$this->post("/{id_user1}/contacts/{id_user2}",\ContactController::class.":insertContact");
+
 	$this->get("/{id_user}/contacts",\ContactController::class.":getContactsOfUser");
+
 	$this->get("/{id_user1}/relationship/{id_user2}",\UserController::class.":getRelationship");
+
 	$this->delete("/{id_user1}/contacts/{id_user2}",\ContactController::class.":deleteContact");
+
 });
 
 $app->group("/groups", function(){
 	$this->get("/{id}",\GroupController::class.":getGroup");
+
 	$this->post("",\GroupController::class.":insertGroup");
+
+	$this->post("/{id_group}/memberRequests/{id_user}",\GroupRequestController::class.":insertGroupRequest");
+
 	$this->post("/{id_group}/addMember/{id_user}",\GroupController::class.":addMember");
+
+	$this->get("/{id_group}/meetings",\MeetingController::class.":getMeetings");
+
+	$this->post("/{id_group}/meetings",\MeetingController::class.":insertMeeting");
+
+	$this->delete("/{id_group}",\GroupController::class.":deleteGroup");
+
+});
+
+$app->group("/meetings",function(){
+	$this->delete("/{id_meeting}",\MeetingController::class.":deleteMeeting");
+
+	$this->get("/{id_meeting}/responses",\MeetingResponseController::class.":getMeetingResponses");
+
+	$this->post("/{id_meeting}/responses/{id_user}",\MeetingResponseController::class.":insertMeetingResponse");
+
+});
+
+$app->group("/responses",function(){
+	$this->put("/{id_response}",\MeetingResponseController::class.":updateMeetingResponse");
+});
+
+$app->group("/memberRequests",function(){
+	$this->delete("/{id_request}",\GroupRequestController::class.":deleteGroupRequest");
+});
+
+$app->group("/contactRequests",function(){
+	
 });
 
 

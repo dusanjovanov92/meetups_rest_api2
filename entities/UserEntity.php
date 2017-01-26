@@ -47,8 +47,8 @@ class UserEntity implements JsonSerializable{
 
 	public function jsonSerialize(){
 		return ["id" => $this->id,
-				"display_name" => $this->display_name,
+				"displayName" => $this->display_name,
 				"email" => $this->email,
-				"photo_url" => $this->photo_url];
+				"photoUrl" => $this->photo_url];
 	}
 }

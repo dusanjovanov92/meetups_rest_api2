@@ -29,17 +29,15 @@ class GroupMapper extends Mapper{
 
 		$groups = [];
 
-		while ($row = $stm->fetch()) {
-			$admin = $this->getGroupAdmin($row["id"]);
-			$member_count = $this->getMemberCount($row["id"]);
-			$members = $this->getGroupMembers($row["id"]);
-			$next_meeting = $this->getNextMeeting($row["id"]);
-			$current_meeting_count = $this->getCurrentMeetingCount($row["id"]);
-			array_push($groups, new GroupEntity($row["id"], $row["name"], $admin, $member_count, $members, $next_meeting, 
-				$current_meeting_count, null));
-		}
+		$row = $stm->fetch();
+		$admin = $this->getGroupAdmin($row["id"]);
+		$member_count = $this->getMemberCount($row["id"]);
+		$members = $this->getGroupMembers($row["id"]);
+		$next_meeting = $this->getNextMeeting($row["id"]);
+		$current_meeting_count = $this->getCurrentMeetingCount($row["id"]);
 
-		return $groups;
+		return new GroupEntity($row["id"], $row["name"], $admin, $member_count, $members, $next_meeting,
+		 $current_meeting_count, null);
 	}
 
 	public function getGroupAdmin($id)
@@ -91,7 +89,7 @@ class GroupMapper extends Mapper{
 
 		$row = $stm->fetch();
 
-		return new MeetingEntity($row);
+		return empty($row)? null :new MeetingEntity($row);
 	}
 
 	public function getCurrentMeetingCount($id)
@@ -114,7 +112,12 @@ class GroupMapper extends Mapper{
 		$stm = $this->db->prepare($sql);
 		$result = $stm->execute([$params["name"],$params["admin"]]);
 
-		return $result;
+		$sql = "INSERT INTO user_group (id_user,id_group) VALUES(?,?);";
+
+		$stm = $this->db->prepare($sql);
+		$result2 = $stm->execute([$params["admin"],$this->db->lastInsertId()]);
+
+		return $result + $result2> 1? true: false;
 	}
 
 	public function addMember($id_group,$id_user)
@@ -126,4 +129,27 @@ class GroupMapper extends Mapper{
 
 		return $result;
 	}
+
+	public function checkMemberExists($id_group,$id_user)
+	{
+		$sql = "SELECT EXISTS(SELECT 1 FROM user_group WHERE id_group = :id_group AND id_user = :id_user) AS exist;";
+
+		$stm = $this->db->prepare($sql);
+		$stm->execute(["id_group"=>$id_group,"id_user"=>$id_user]);
+
+		$result = $stm->fetch();
+
+		return $result["exist"]==0 ? false : true;
+	}
+
+	public function deleteGroup($id_group)
+	{
+		$sql = "DELETE FROM groups WHERE id = ?;";
+
+		$stm = $this->db->prepare($sql);
+		$stm->execute([$id_group]);
+
+		return $stm->rowCount()>0? true: false;
+	}
+
 }

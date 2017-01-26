@@ -37,9 +37,20 @@ class GroupController extends Controller
 		$id_user = $args["id_user"];
 
 		$group_mapper = new GroupMapper($this->db);
-		$result = $group_mapper->addMember($id_group,$id_user);
+		$result = $group_mapper->addMember($id_group, $id_user);
 
 		$response = $response->withJson($result,201);
 		return $response;
 	}
+
+	public function deleteGroup($request,$response,$args){
+		$id_group = $args["id_group"];
+
+		$group_mapper = new GroupMapper($this->db);
+		$result = $group_mapper->deleteGroup($id_group);
+
+		$response = $response->withJson($result,200);
+		return $response;
+	}
+
 }

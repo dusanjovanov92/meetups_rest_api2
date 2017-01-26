@@ -2,10 +2,20 @@
 
 class GroupRequestEntity implements JsonSerializable{
 
+	protected $id;
 	protected $group;
 
-	public function __construct($group){
+	public function __construct($id,$group){
+		$this->id = $id;
 		$this->group = $group;
+	}
+
+	/**
+	 * @return integer
+	 */
+	public function getId()
+	{
+	    return $this->id;
 	}
 
 	/**
@@ -18,6 +28,7 @@ class GroupRequestEntity implements JsonSerializable{
 
 	public function jsonSerialize()
 	{
-		return ["group"=>$this->group];
+		return ["id"=>$this->id,
+				"group"=>$this->group];
 	}
 }

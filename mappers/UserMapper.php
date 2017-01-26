@@ -44,9 +44,9 @@ class UserMapper extends Mapper{
 		$sql = "INSERT INTO user (display_name,email,photo_url,token) VALUES(?,?,?,?);";
 
 		$stm = $this->db->prepare($sql);
-		$result = $stm->execute([$params["display_name"],$params["email"],$params["photo_url"],$params["token"]]);
+		$stm->execute([$params["display_name"],$params["email"],$params["photo_url"],$params["token"]]);
 
-		return $result;
+		return $this->db->lastInsertId();
 	}
 
 	public function emailExists($email)

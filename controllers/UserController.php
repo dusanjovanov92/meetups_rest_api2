@@ -38,9 +38,17 @@ class UserController extends Controller{
 		$params = $request->getParsedBody();
 
 		$user_mapper = new UserMapper($this->db);
-		$result = $user_mapper->insertUser($params);
+		$user_exists = $user_mapper->emailExists($params["email"]);
+		$result = null;
 
-		$response = $response->withStatus(201);
+		if($user_exists){
+			$result = $user_mapper->getUserByEmail($params["email"]);
+		}
+		else{
+			$insert_id = $user_mapper->insertUser($params);
+			$result = $user_mapper->getUserById($insert_id);
+		}
+		$response = $response->withJson($result,200);
 		return $response;
 	}
 

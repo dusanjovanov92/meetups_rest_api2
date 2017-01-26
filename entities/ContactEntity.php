@@ -30,6 +30,6 @@ class ContactEntity implements JsonSerializable{
 	public function jsonSerialize()
 	{
 		return ["user"=>$this->user,
-				"firebase_node"=>$this->firebase_node];
+				"firebaseNode"=>$this->firebase_node];
 	}
 }

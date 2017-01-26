@@ -24,15 +24,15 @@ class ContactRequestMapper extends Mapper{
 
 	public function getContactRequests($id_user)
 	{
-		$sql = "SELECT u.id,u.display_name,u.email,u.photo_url FROM contact_requests cr INNER JOIN user u ON cr.sender = u.id 
-		WHERE cr.receiver= :id_user";
+		$sql = "SELECT cr.id_request,u.id,u.display_name,u.email,u.photo_url FROM contact_requests cr INNER JOIN user u 
+		ON cr.sender = u.id WHERE cr.receiver= :id_user";
 
 		$stm = $this->db->prepare($sql);
 		$stm->execute(["id_user"=>$id_user]);
 
 		$requests= [];
 		while ($row = $stm->fetch()) {
-			array_push($requests, new ContactRequestEntity(new UserEntity($row)));
+			array_push($requests, new ContactRequestEntity($row["id_request"],new UserEntity($row)));
 		}
 
 		return $requests;
