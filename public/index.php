@@ -79,6 +79,19 @@ $container["MeetingResponseController"] = function($c){
 	return new MeetingResponseController($c->get("db"));
 };
 
+$container["TestController"] = function($c){
+	return new TestController($c->get("db"));
+};
+
+$app->group("/test",function(){
+	$this->delete("/all",\TestController::class.":deleteAll");
+	$app->delete("/groups",\TestController::class.":deleteGroups");
+	$app->delete("/requests",\TestController::class.":deleteRequests");
+	$app->post("/requests",\TestController::class.":insertRequests");
+	$app->post("/groups",\TestController::class.":insertGroups");
+	$app->post("/contacts",\TestController::class.":insertContacts");
+});
+
 $app->group("/users", function(){
 	$this->get("/{id}", \UserController::class.":getUserById");
 
