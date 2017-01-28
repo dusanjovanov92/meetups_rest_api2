@@ -84,12 +84,15 @@ $container["TestController"] = function($c){
 };
 
 $app->group("/test",function(){
+	$this->post("/users",\TestController::class.":insertUsers");
+	$this->delete("/users",\TestController::class.":deleteUsers");
+	$this->post("/groups",\TestController::class.":insertGroups");
+	$this->delete("/groups",\TestController::class.":deleteGroups");
+	$this->post("/contacts",\TestController::class.":insertContacts");
+	$this->delete("/contacts",\TestController::class.":deleteContacts");
+	$this->post("/requests",\TestController::class.":insertRequests");
+	$this->delete("/requests",\TestController::class.":deleteRequests");
 	$this->delete("/all",\TestController::class.":deleteAll");
-	$app->delete("/groups",\TestController::class.":deleteGroups");
-	$app->delete("/requests",\TestController::class.":deleteRequests");
-	$app->post("/requests",\TestController::class.":insertRequests");
-	$app->post("/groups",\TestController::class.":insertGroups");
-	$app->post("/contacts",\TestController::class.":insertContacts");
 });
 
 $app->group("/users", function(){
