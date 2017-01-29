@@ -85,13 +85,27 @@ $container["TestController"] = function($c){
 
 $app->group("/test",function(){
 	$this->post("/users",\TestController::class.":insertUsers");
+
 	$this->delete("/users",\TestController::class.":deleteUsers");
+
 	$this->post("/groups",\TestController::class.":insertGroups");
+
 	$this->delete("/groups",\TestController::class.":deleteGroups");
+
 	$this->post("/contacts",\TestController::class.":insertContacts");
+
 	$this->delete("/contacts",\TestController::class.":deleteContacts");
+
 	$this->post("/requests",\TestController::class.":insertRequests");
+
 	$this->delete("/requests",\TestController::class.":deleteRequests");
+
+	$this->post("/meetings",\TestController::class.":insertMeetings");
+
+	$this->delete("/meetings",\TestController::class.":deleteMeetings");
+
+	$this->delete("/meetingResponses",\TestController::class.":deleteMeetingResponses");
+
 	$this->delete("/all",\TestController::class.":deleteAll");
 });
 
@@ -148,12 +162,12 @@ $app->group("/meetings",function(){
 
 	$this->get("/{id_meeting}/responses",\MeetingResponseController::class.":getMeetingResponses");
 
-	$this->post("/{id_meeting}/responses/{id_user}",\MeetingResponseController::class.":insertMeetingResponse");
+	$this->put("/{id_meeting}/meetingResponses/{id_user}",\MeetingResponseController::class.":updateMeetingResponse");
 
 });
 
-$app->group("/responses",function(){
-	$this->put("/{id_response}",\MeetingResponseController::class.":updateMeetingResponse");
+$app->group("/meetingResponses",function(){
+	
 });
 
 $app->group("/memberRequests",function(){

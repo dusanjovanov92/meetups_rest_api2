@@ -19,22 +19,27 @@ class MeetingResponseMapper extends Mapper{
 		return $responses;
 	}
 
-	public function insertMeetingResponse($id_meeting,$id_user,$params)
+	public function updateMeetingResponse($id_meeting,$id_user,$params)
 	{
-		$sql = "INSERT INTO meeting_response (id_meeting,id_user,response) VALUES (?,?,?);";
+		$sql = "SELECT EXISTS(SELECT 1 FROM meeting_response WHERE id_meeting = :id_meeting AND id_user = :id_user) AS exist;";
 
 		$stm = $this->db->prepare($sql);
-		$result = $stm->execute([$id_meeting,$id_user,$params["response"]]);
+		$stm->execute(["id_meeting"=>$id_meeting,"id_user"=>$id_user]);
 
-		return $result;
-	}
+		$row = $stm->fetch();
+		$exists = $row["exist"];
 
-	public function updateMeetingResponse($id_response,$params)
-	{
-		$sql = "UPDATE meeting_response SET response = :response WHERE id= :id_response;";
-
-		$stm = $this->db->prepare($sql);
-		$result = $stm->execute(["response"=>$params["response"],"id_response"=>$id_response]);
+		$result = null;
+		if($exists==0){
+			$sql = "INSERT INTO meeting_response (id_meeting,id_user,response) VALUES(?,?,?);";
+			$stm2 = $this->db->prepare($sql);
+			$result = $stm2->execute([$id_meeting,$id_user,$params["response"]]);
+		}
+		else{
+			$sql = "UPDATE meeting_response SET response = :response WHERE id_meeting = :id_meeting AND id_user = :id_user;";
+			$stm2 = $this->db->prepare($sql);
+			$result = $stm2->execute(["response"=>$params["response"],"id_meeting"=>$id_meeting,"id_user"=>$id_user]);
+		}
 
 		return $result;
 	}

@@ -25,7 +25,7 @@ class ContactRequestMapper extends Mapper{
 	public function getContactRequests($id_user)
 	{
 		$sql = "SELECT cr.id_request,u.id,u.display_name,u.email,u.photo_url FROM contact_requests cr INNER JOIN user u 
-		ON cr.sender = u.id WHERE cr.receiver= :id_user";
+		ON cr.sender = u.id WHERE cr.receiver= :id_user ORDER BY cr.id_request DESC";
 
 		$stm = $this->db->prepare($sql);
 		$stm->execute(["id_user"=>$id_user]);

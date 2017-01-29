@@ -4,7 +4,7 @@ class GroupMapper extends Mapper{
 
 	public function getGroupsOfUser($id)
 	{
-		$sql = "SELECT g.id,g.name FROM groups g INNER JOIN user_group ug ON g.id = ug.id_group INNER JOIN user u ON ug.id_user = u.id WHERE u.id = :id";
+		$sql = "SELECT g.id,g.name FROM groups g INNER JOIN user_group ug ON g.id = ug.id_group WHERE ug.id_user = :id ORDER BY g.name";
 
 		$stm = $this->db->prepare($sql);
 		$stm->execute(["id"=>$id]);
@@ -66,7 +66,7 @@ class GroupMapper extends Mapper{
 
 	public function getGroupMembers($id)
 	{
-		$sql = "SELECT u.id,display_name,email,photo_url FROM user_group ug INNER JOIN user u ON ug.id_user = u.id WHERE ug.id_group = :id_group";
+		$sql = "SELECT u.id,display_name,email,photo_url FROM user_group ug INNER JOIN user u ON ug.id_user = u.id WHERE ug.id_group = :id_group ORDER BY display_name";
 
 		$stm = $this->db->prepare($sql);
 		$stm->execute(["id_group"=>$id]);

@@ -26,7 +26,7 @@ class UserMapper extends Mapper{
 
 	public function getUsersByDisplayName($query)
 	{
-		$sql = "SELECT id,display_name,email,photo_url FROM user WHERE display_name like :query";
+		$sql = "SELECT id,display_name,email,photo_url FROM user WHERE display_name like :query ORDER BY display_name";
 
 		$stm = $this->db->prepare($sql);
 		$stm->execute(["query" => $query."%"]);

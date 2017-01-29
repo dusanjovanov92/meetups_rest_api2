@@ -25,11 +25,12 @@ class MeetingResponseController extends Controller{
 	}
 
 	public function updateMeetingResponse($request,$response,$args){
-		$id_response = $args["id_response"];
+		$id_meeting = $args["id_meeting"];
+		$id_user = $args["id_user"];
 		$params = $request->getParsedBody();
 
 		$meeting_response_mapper = new MeetingResponseMapper($this->db);
-		$result = $meeting_response_mapper->updateMeetingResponse($id_response,$params);
+		$result = $meeting_response_mapper->updateMeetingResponse($id_meeting,$id_user,$params);
 
 		$response = $response->withJson($result,200);
 		return $response;

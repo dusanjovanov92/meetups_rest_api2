@@ -27,7 +27,7 @@ class GroupRequestMapper extends Mapper{
 	public function getGroupRequests($id_user)
 	{
 		$sql = "SELECT gur.id AS id_request,g.id AS id_group,g.name,u.id,u.id AS id_user,u.display_name,u.email,u.photo_url FROM groups g INNER JOIN group_user_requests gur 
-		ON gur.id_group = g.id INNER JOIN user u ON gur.id_user = u.id WHERE gur.id_user = :id_user";
+		ON gur.id_group = g.id INNER JOIN user u ON gur.id_user = u.id WHERE gur.id_user = :id_user ORDER BY gur.id DESC";
 
 		$stm = $this->db->prepare($sql);
 		$stm->execute(["id_user"=>$id_user]);

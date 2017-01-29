@@ -67,31 +67,54 @@ class TestController extends Controller{
 
 	public function deleteGroups($request,$response,$args){
 		$result = $this->deleteTableValues("groups");
-		$result2 = $this->deleteTableValues("user_group");
 
-		$response = $response->withJson($result and $result2,200); 
+		$response = $response->withJson($result,200); 
 		return $response;
 	}
 
 	public function insertMeetings($request,$response,$args){
 		$sql = "INSERT INTO meeting (id_group,start_time,firebase_node,label) VALUES(?,?,?,?);";
 
-		$stm3 = $this->db->prepare($sql);
+		$stm = $this->db->prepare($sql);
 
-		$timestamps= [1485620357,1484006400,1488754800,1466703000,1485877500];
+		$timestamps= [1466703000,1484006400,1485620357,1485877500,1488754800];
 
+		$group_ids = $this->selectGroupsIds();
+
+		$meetings_ids = [];
 		foreach ($group_ids as $value) {
 			for ($i=1; $i <= 5; $i++) { 
-				$stm3->execute([$value,$timestamps[$i-1],null,"Sastanak ".$i]);
-				$stm3->closeCursor();
+				$stm->execute([$value,$timestamps[$i-1],"-ABCD","Sastanak ".$i]);
+				$stm->closeCursor();
+				array_push($meetings_ids,$this->db->lastInsertId());
 			}
 		}
 
-		$sql = "INSERT INTO meeting;";
+		$sql2 = "INSERT INTO meeting_response (id_meeting,id_user,response) VALUES(?,?,?);";
 
-		$stm3 = $this->db->prepare($sql);
+		$stm2 = $this->db->prepare($sql2);
 
+		$users_ids = $this->selectUsersIds(true);
+		foreach ($meetings_ids as $value) {
+			for ($i=0; $i < 5; $i++) { 
+				$stm2->execute([$value,$users_ids[$i],$i%2+1]);
+				$stm2->closeCursor();
+			}
+		}
 
+		$response = $response->withJson($this->db->errorCode(),200);
+		return $response;
+	}
+
+	public function deleteMeetings($request,$response,$args){
+		$result = $this->deleteTableValues("meeting");
+
+		$response = $response->withJson($result,200);
+		return $response;
+	}
+
+	public function deleteMeetingResponses($request,$response,$args){
+		$result = $this->deleteTableValues("meeting_response");
 
 		$response = $response->withJson($result,200);
 		return $response;
@@ -101,18 +124,18 @@ class TestController extends Controller{
 		$users_ids = $this->selectUsersIds(false);
 
 		$sql_insert = "INSERT INTO contact (id_user1,id_user2,firebase_node) 
-		SELECT ? as id_user1,id,?as firebase_node
+		SELECT ? as id_user1,id,? AS firebase_node
 		FROM user
 		WHERE email = 'jovanovdusan1@gmail.com';
 		INSERT INTO contact (id_user1,id_user2,firebase_node)
-		SELECT id,?as id_user2,?as firebase_node
+		SELECT id,?as id_user2,? AS firebase_node
 		FROM user
 		WHERE email = 'jovanovdusan1@gmail.com';";
 
 		$stm = $this->db->prepare($sql_insert);
 	
 		foreach ($users_ids as $key => $value) {
-			$stm->execute([$value,"-".($key+1),$value,"-".($key+1)]);
+			$stm->execute([$value,"-ABCD",$value,"-ABCD"]);
 			$stm->closeCursor();
 		}
 
@@ -137,6 +160,17 @@ class TestController extends Controller{
 
 		foreach ($users_ids as $value) {
 			$stm2->execute([$value]);
+		}
+
+		$sql = "INSERT INTO group_user_requests (id_group,id_user) SELECT ? AS id_group,id FROM user
+		WHERE email = 'jovanovdusan1@gmail.com';";
+
+		$groups_ids = $this->selectGroupsIds();
+		$stm = $this->db->prepare($sql);
+
+		foreach ($groups_ids as $value) {
+			$stm->execute([$value]);
+			$stm->closeCursor();
 		}
 
 		$response = $response->withJson($this->db->errorCode(),200);
@@ -172,6 +206,22 @@ class TestController extends Controller{
 		}
 
 		return $users_ids;
+	}
+
+	public function selectGroupsIds()
+	{
+		$sql = "SELECT id FROM groups";
+
+		$stm = $this->db->query($sql);
+		$stm->execute();
+
+		$groups_ids = [];
+		while ($row = $stm->fetch()) {
+			array_push($groups_ids, $row["id"]);
+		}
+
+		return $groups_ids;
+
 	}
 
 	public function deleteTableValues($table_name)

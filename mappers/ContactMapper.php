@@ -18,7 +18,7 @@ class ContactMapper extends Mapper{
 	public function getContactsOfUser($id_user)
 	{
 		$sql = "SELECT u.id,u.display_name,u.email,u.photo_url,c.firebase_node FROM contact c INNER JOIN user u ON c.id_user1 = u.id 
-		WHERE c.id_user2 = :id_user";
+		WHERE c.id_user2 = :id_user ORDER BY u.display_name";
 
 		$stm = $this->db->prepare($sql);
 		$stm->execute(["id_user"=>$id_user]);
