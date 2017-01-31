@@ -24,7 +24,7 @@ class UserEntity implements JsonSerializable{
 	/**
 	 * @return string
 	 */
-	public function getDisplay_name()
+	public function getDisplayName()
 	{
 	    return $this->display_name;
 	}		
@@ -40,7 +40,7 @@ class UserEntity implements JsonSerializable{
 	/**
 	 * @return string
 	 */
-	public function getPhoto_url()
+	public function getPhotoUrl()
 	{
 	    return $this->photo_url;
 	}

@@ -101,5 +101,17 @@ class UserMapper extends Mapper{
 		
 		return 0;
 	}
+
+	public function updateToken($params,$email)
+	{
+		$sql = "UPDATE user SET token = ? WHERE email = ?;";
+
+		$stm = $this->db->prepare($sql);
+		$stm->execute([$params["token"],$email]);
+
+		$user = $this->getUserByEmail($email);
+
+		return $user;
+	}
 }
 

@@ -83,4 +83,15 @@ class UserController extends Controller{
 		$response = $response->withJson($result,200);
 		return $response;
 	}
+
+	public function updateToken($request,$response,$args){
+		$email = $args["email"];
+		$params = $request->getParsedBody();
+
+		$user_mapper = new UserMapper($this->db);
+		$user = $user_mapper->updateToken($params,$email);
+
+		$response = $response->withJson($user,200);
+		return $response;
+	}
 }

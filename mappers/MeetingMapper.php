@@ -22,9 +22,18 @@ class MeetingMapper extends Mapper{
 		$sql = "INSERT INTO meeting (id_group,start_time,firebase_node,label) values(?,?,?,?);";
 
 		$stm = $this->db->prepare($sql);
-		$result = $stm->execute([$id_group,$params["start_time"],$params["firebase_node"],$params["label"]]);
+		$stm->execute([$id_group,$params["start_time"],$params["firebase_node"],$params["label"]]);
 
-		return $result;
+		$meeting_id = $this->db->lastInsertId();
+
+		$sql = "SELECT id,id_group,start_time,firebase_node,label FROM meeting WHERE id = ?;";
+
+		$stm2 = $this->db->prepare($sql);
+		$stm2->execute([$meeting_id]);
+
+		$row = $stm2->fetch();
+
+		return new MeetingEntity($row);
 	}
 
 	public function deleteMeeting($id_meeting)

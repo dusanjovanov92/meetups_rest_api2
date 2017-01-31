@@ -30,9 +30,8 @@ $app->add(function($request,$response,$next){
 	$authorization_header = $request->getHeader("Authorization");
 
 	if(empty($authorization_header) || ($authorization_header[0]!="duca")){
-		
-		header("HTTP/1.1 400 Access denied");
-		exit;
+
+		return $response->withStatus(400);
 	}
 
 	$response = $next($request,$response);
@@ -110,6 +109,8 @@ $app->group("/test",function(){
 });
 
 $app->group("/users", function(){
+	$this->put("/{email}/token",\UserController::class.":updateToken");
+
 	$this->get("/{id}", \UserController::class.":getUserById");
 
 	$this->get("/getByEmail/{email}", \UserController::class.":getUserByEmail");
