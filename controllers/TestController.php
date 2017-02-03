@@ -23,6 +23,8 @@ class TestController extends Controller{
 
 		$stm->execute(["Dusan Jovanov","jovanovdusan1@gmail.com","https://lh5.googleusercontent.com/-7wJjSNj1VdQ/AAAAAAAAAAI/AAAAAAAAAG0/EbDsGeLHofg/s96-c/photo.jpg",null]);
 
+		$stm->execute(["Test Test","test@test.com",null,null]);
+
 		$response = $response->withJson($this->db->errorCode(),200);
 		return $response;
 	}
@@ -77,7 +79,7 @@ class TestController extends Controller{
 
 		$stm = $this->db->prepare($sql);
 
-		$timestamps= [1466703000,1484006400,1485620357,1485877500,1488754800];
+		$timestamps= [1466703000,1484006400,1485620357,1498619700,1512315120];
 
 		$group_ids = $this->selectGroupsIds();
 
@@ -152,24 +154,25 @@ class TestController extends Controller{
 
 	public function insertRequests($request,$response,$args){
 		$users_ids = $this->selectUsersIds(false);
+		$params = $request->getParsedBody();
 
 		$sql_insert_cr = "INSERT INTO contact_requests (sender,receiver) SELECT ? AS sender,id FROM user 
-		WHERE email= 'jovanovdusan1@gmail.com';";
+		WHERE email= ?;";
 
 		$stm2 = $this->db->prepare($sql_insert_cr);
 
 		foreach ($users_ids as $value) {
-			$stm2->execute([$value]);
+			$stm2->execute([$value,$params["email"]]);
 		}
 
 		$sql = "INSERT INTO group_user_requests (id_group,id_user) SELECT ? AS id_group,id FROM user
-		WHERE email = 'jovanovdusan1@gmail.com';";
+		WHERE email = ?;";
 
 		$groups_ids = $this->selectGroupsIds();
 		$stm = $this->db->prepare($sql);
 
 		foreach ($groups_ids as $value) {
-			$stm->execute([$value]);
+			$stm->execute([$value,$params["email"]]);
 			$stm->closeCursor();
 		}
 
@@ -178,13 +181,12 @@ class TestController extends Controller{
 	}
 
 	public function deleteRequests($request,$response,$args){
-		$result = $this->deleteTableValues("contact_requests");
+		$this->deleteTableValues("contact_requests");
+		$this->deleteTableValues("group_user_requests");
 
-		$response = $response->withJson($result,200);
+		$response = $response->withJson($this->db->errorCode(),200);
 		return $response;
 	}	
-
-
 
 	public function selectUsersIds($all)
 	{

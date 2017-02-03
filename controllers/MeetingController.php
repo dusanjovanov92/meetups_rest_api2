@@ -43,9 +43,11 @@ class MeetingController extends Controller{
 
 	public function sendNotifications($group,$meeting,$user)
 	{
+		$tokens = $this->getMembersTokens($group->getId());
+
 		$url = 'https://fcm.googleapis.com/fcm/send';
             $fields = array(
-            	"to"=>"dpICYipD-zI:APA91bHH96AFQiBo_ZqRmHYAxz4UUydTEVMYW1I4ejvGnSX8dA9NkGu5XraKq2l5VM8CJKkXOGmiC8OfuzLzGeQFkXNCmotKWDpEZvunWVbEpDUeCAsC3xCVQDUgangVYONQRfUtus33",
+            	"registration_ids"=>$tokens,
             	"data"=>["group_id"=>$group->getId(),
             			"group_name"=>$group->getName(),
             			"group_admin"=>$group->getAdmin()->getId(),
@@ -77,6 +79,22 @@ class MeetingController extends Controller{
             }
             curl_close($ch);
             return $result;
+	}
+
+	public function getMembersTokens($id_group)
+	{
+		$sql = "SELECT u.token FROM user u INNER JOIN user_group ug ON u.id = ug.id_user
+		INNER JOIN groups g ON ug.id_group = g.id WHERE g.id = ? AND u.id <> g.admin;";
+
+		$stm = $this->db->prepare($sql);
+		$stm->execute([$id_group]);
+
+		$tokens = [];
+		while ($row = $stm->fetch()) {
+			array_push($tokens,$row["token"]);
+		}
+
+		return $tokens;
 	}
 
 }
